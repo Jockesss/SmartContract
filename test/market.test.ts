@@ -93,51 +93,51 @@ describe("Market Contract Test", async function () {
     console.log("Token Wallet адрес сохранен:", tokenWalletAddress.toString());
   });
 
-  // it("Accept tokens and mint NFTs", async function () {
-  //   const marketContract = locklift.factory.getDeployedContract("Market", marketAddress);
-  //
-  //   console.log("Отправка токенов с параметрами:");
-  //   console.log("tokenWalletAddress:", tokenWalletAddress.toString());
-  //   console.log("amount:", toNano(25).toString());
-  //
-  //   try {
-  //     await locklift.transactions.waitFinalized(
-  //       marketContract.methods.onAcceptTokensTransfer({
-  //         value0: tokenWalletAddress,
-  //         amount: toNano(25),
-  //         sender: signer.address,
-  //         value3: tokenWalletAddress,
-  //         value4: signer.address,
-  //         value5: beginCell().endCell().toBoc().toString("base64"),
-  //       }).sendExternal({ publicKey: signer.publicKey })
-  //     );
-  //   } catch (error) {
-  //     console.error("Ошибка при отправке токенов и чеканке NFT:", error);
-  //     throw error;
-  //   }
-  // });
-  //
-  // it("Fail on insufficient tokens", async function () {
-  //   const marketContract = locklift.factory.getDeployedContract("Market", marketAddress);
-  //
-  //   console.log("Отправка недостаточного количества токенов с параметрами:");
-  //   console.log("tokenWalletAddress:", tokenWalletAddress.toString());
-  //   console.log("amount:", toNano(5).toString());
-  //
-  //   try {
-  //     await locklift.transactions.waitFinalized(
-  //       marketContract.methods.onAcceptTokensTransfer({
-  //         value0: tokenWalletAddress,
-  //         amount: toNano(5),
-  //         sender: signer.address,
-  //         value3: tokenWalletAddress,
-  //         value4: signer.address,
-  //         value5: beginCell().endCell().toBoc().toString("base64"),
-  //       }).sendExternal({ publicKey: signer.publicKey })
-  //     );
-  //     expect.fail("Транзакция должна была завершиться неудачей из-за недостаточного количества токенов");
-  //   } catch (error) {
-  //     console.log("Транзакция завершилась неудачей, как и ожидалось, из-за недостаточного количества токенов:", error);
-  //   }
-  // });
+  it("Accept tokens and mint NFTs", async function () {
+    const marketContract = locklift.factory.getDeployedContract("Market", marketAddress);
+
+    console.log("Отправка токенов с параметрами:");
+    console.log("tokenWalletAddress:", tokenWalletAddress.toString());
+    console.log("amount:", toNano(25).toString());
+
+    try {
+      await locklift.transactions.waitFinalized(
+        marketContract.methods.onAcceptTokensTransfer({
+          value0: tokenWalletAddress,
+          amount: toNano(25),
+          sender: signer.address,
+          value3: tokenWalletAddress,
+          value4: signer.address,
+          value5: beginCell().endCell().toBoc().toString("base64"),
+        }).sendExternal({ publicKey: signer.publicKey })
+      );
+    } catch (error) {
+      console.error("Ошибка при отправке токенов и чеканке NFT:", error);
+      throw error;
+    }
+  });
+
+  it("Fail on insufficient tokens", async function () {
+    const marketContract = locklift.factory.getDeployedContract("Market", marketAddress);
+
+    console.log("Отправка недостаточного количества токенов с параметрами:");
+    console.log("tokenWalletAddress:", tokenWalletAddress.toString());
+    console.log("amount:", toNano(5).toString());
+
+    try {
+      await locklift.transactions.waitFinalized(
+        marketContract.methods.onAcceptTokensTransfer({
+          value0: tokenWalletAddress,
+          amount: toNano(5),
+          sender: signer.address,
+          value3: tokenWalletAddress,
+          value4: signer.address,
+          value5: beginCell().endCell().toBoc().toString("base64"),
+        }).sendExternal({ publicKey: signer.publicKey })
+      );
+      expect.fail("Транзакция должна была завершиться неудачей из-за недостаточного количества токенов");
+    } catch (error) {
+      console.log("Транзакция завершилась неудачей, как и ожидалось, из-за недостаточного количества токенов:", error);
+    }
+  });
 });

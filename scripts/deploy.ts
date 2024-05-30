@@ -12,7 +12,6 @@ async function main() {
       contract: "Collection",
       publicKey: signer.publicKey,
       initParams: {
-        // Параметры инициализации коллекции, если есть
       },
       constructorParams: {
         owner: signer.publicKey,
