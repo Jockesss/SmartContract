@@ -1,0 +1,67 @@
+pragma ever-solidity ^0.62.0;
+
+pragma AbiHeader expire;
+pragma AbiHeader pubkey;
+
+import "./tip3/contracts/interfaces/ITokenRoot.tsol";
+import "./tip3/contracts/interfaces/ITokenWallet.tsol";
+import "./tip3/contracts/interfaces/IAcceptTokensTransferCallback.tsol";
+import "./tip4/contracts/Collection.tsol";
+
+contract Market is IAcceptTokensTransferCallback {
+    address public tokenRoot;
+    address public tokenWallet;
+    address public collection;
+    uint128 public nftPrice;
+    address public owner;
+
+    constructor(address _tokenRoot, address _collection, uint128 _nftPrice) public {
+        tvm.accept();
+        tokenRoot = _tokenRoot;
+        collection = _collection;
+        nftPrice = _nftPrice;
+        owner = msg.sender;
+
+        ITokenRoot(tokenRoot).deployWallet{value: 1 ever, flag: 1, callback: onWalletDeployed}(address(this), 0.5 ever);
+    }
+
+    function onWalletDeployed(address _tokenWallet) public {
+        require(msg.sender == tokenRoot, 101);
+        tokenWallet = _tokenWallet;
+        tvm.log(format("Token wallet deployed at address: {}", _tokenWallet));
+    }
+
+    function onAcceptTokensTransfer(
+        address /*_tokenRoot*/,
+        uint128 amount,
+        address sender,
+        address /*_recipient*/,
+        address /*_remainingGasTo*/,
+        TvmCell /*_payload*/
+    ) external override {
+        require(msg.sender == tokenWallet, 102);
+        tvm.accept();
+        tvm.log(format("Accepted tokens transfer: {} tokens from {}", amount, sender));
+
+        uint128 nftCount = amount / nftPrice;
+        uint128 change = amount % nftPrice;
+
+        if (nftCount > 0) {
+            for (uint128 i = 0; i < nftCount; i++) {
+                tvm.log(format("Minting NFT for: {}", sender));
+                Collection(collection).mintNft{value: 1 ever, flag: 1}(sender, "NFT Metadata JSON");
+            }
+        }
+
+        if (change > 0) {
+            TvmCell empty;
+            tvm.log(format("Returning change: {} tokens to {}", change, sender));
+            ITokenWallet(tokenWallet).transfer{value: 1 ever, flag: 1}(change, sender, 0.5 ever, sender, true, empty);
+        } else if (nftCount == 0) {
+            // Если недостаточно токенов для покупки хотя бы одного NFT, вернуть все токены
+            TvmCell empty;
+            tvm.log(format("Returning all tokens: {} tokens to {}", amount, sender));
+            ITokenWallet(tokenWallet).transfer{value: 1 ever, flag: 1}(amount, sender, 0.5 ever, sender, true, empty);
+        }
+    }
+}

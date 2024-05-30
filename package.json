@@ -11,6 +11,9 @@
     "nekoton-wasm": "npm:nekoton-wasm-locklift@1.20.2"
   },
   "devDependencies": {
+    "@broxus/locklift-deploy": "^1.1.1",
+    "@broxus/tip3": "^2.0.0",
+    "@broxus/tip4": "^2.0.0",
     "@types/chai": "^4.3.16",
     "@types/mocha": "^10.0.6",
     "@types/node": "^20.12.12",
@@ -19,6 +22,11 @@
     "locklift": "^2.9.4",
     "prettier": "^3.2.5",
     "ts-mocha": "^10.0.0",
-    "typescript": "^4.7.4"
+    "ts-node": "^10.9.2",
+    "typescript": "^4.9.5"
+  },
+  "dependencies": {
+    "@openzeppelin/contracts": "^5.0.2",
+    "ton": "^13.9.0"
   }
 }
